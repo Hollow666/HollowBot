@@ -1,14 +1,11 @@
-import config
-import sqlite3
+from config import config
 from threading import Thread
 import datetime
 from datetime import datetime
-from datetime import time
 from telegram import Update
 from telegram.ext import Filters
 from telegram.ext import Updater
-from telegram.ext import MessageHandler, CommandHandler, ConversationHandler, Handler
-
+from telegram.ext import MessageHandler, CommandHandler, ConversationHandler
 
 CODE, Z1, Z1_CODE = range(3)
 start_code = 'start'
