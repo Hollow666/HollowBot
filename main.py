@@ -7,12 +7,30 @@ from telegram.ext import Filters
 from telegram.ext import Updater
 from telegram.ext import MessageHandler, CommandHandler, ConversationHandler
 
-CODE, Z1, Z1_CODE = range(3)
+
+########################################################################################################################
+                                                #ПЕРЕМЕННЫЕ
+
+
+CODE = 1
 start_code = 'start'
 now_time =''
 id_list = list()
 zadanie_1 = 'Задание 1\n<z1 text>/nКод опасности ХУЙ.'
-reg_flag = True
+print ('start')
+updater = Updater(
+        config.TOKEN,
+        base_url=config.API_URL,
+        use_context=True
+    )
+
+
+########################################################################################################################
+
+
+########################################################################################################################
+                                            #ЧАСЫ РЕАЛЬНОГО ВРЕМЕНИ
+
 
 def clock():
     global now_time
@@ -20,13 +38,16 @@ def clock():
         now_time = datetime.now().time()
 
 
+########################################################################################################################
+
+
+########################################################################################################################
+                                                #РЕГИСТРАЦИЯ
+
+
 def main():
-    global now_time, id_list, zadanie_1, reg_flag
-    updater = Updater(
-        config.TOKEN,
-        base_url=config.API_URL,
-        use_context=True
-    )
+    global now_time, id_list, zadanie_1, updater
+
     dispatcher = updater.dispatcher
     conversation = ConversationHandler(
         entry_points=[
@@ -49,22 +70,22 @@ def main():
 
 
     updater.start_polling()
-    updater.idle()
+    #updater.idle()
 
 
-##### FUCKING REGISTRATION
 class registration:
 
     def sg_start(update: Update, context):
-        global id_list
+        global id_list, updater
         print ('sg_start')
-        if now_time.hour < 23:
+        if now_time.hour < 17:
             print(1)
             id_list.append(update.message.chat_id)
             context.bot.send_message(chat_id=update.message.chat_id, text='Введите код начала игры.')
             return CODE
         else:
             context.bot.send_message(chat_id=update.message.chat_id, text='Registraciya zevershena.')
+            updater.stop()
             return ConversationHandler.END
 
 
@@ -86,7 +107,10 @@ class registration:
     def sg_cancel(update: Update, context):
         context.bot.send_message(chat_id=update.message.chat_id, text='Игра отклонена.')
         return ConversationHandler.END
-##### END OF FUCKING REGISTRATION
+
+
+########################################################################################################################
+                                                #ИФНО
 
 
 def echo(update: Update, context):
@@ -95,30 +119,62 @@ def echo(update: Update, context):
     context.bot.send_message(chat_id=update.message.chat_id, text=f'Chat_id: {update.effective_message.chat_id}\nMessage_id: {update.effective_message.message_id}\nText: {update.effective_message.text}\nMessage_time: {now_time}')
 
 
-def game():
-    global now_time, id_list, zadanie_1, reg_flag
-    updater = Updater(
+########################################################################################################################
+                                                #ЗАДАНИЕ_1
+
+
+def z1():
+    global now_time, id_list, zadanie_1
+    updater_z1 = Updater(
         config.TOKEN,
         base_url=config.API_URL,
         use_context=True
-    )
+     )
 
     loop = True
     while loop:
-        if now_time.hour == 22 and now_time.minute == 32:
+        if now_time.hour == 17 and now_time.minute == 57:
             for id in id_list:
-                zadanie1_msg(context=updater, id=id)
+                 z1.zadanie1_send(context=updater_z1, id=id)
             break
+    code1_handler = MessageHandler(Filters.text, z1.zadanie1_code)
 
 
-def zadanie1_msg(context, id):
-    context.bot.send_message(chat_id=id, text=zadanie_1)
-    return
+class z1:
+
+    def zadanie1_send(context, id):
+        context.bot.send_message(chat_id=id, text=zadanie_1)
+        return
+
+
+    def zadanie1_code(update: Update, context):
+        return
+########################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
+    print(1)
     Thread(target=main).start()
+    print(2)
     Thread(target=clock).start()
-    Thread(target=game).start()
+    print(3)
+    Thread(target=z1).start()
 
 
 
