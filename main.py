@@ -137,7 +137,15 @@ def z1():
             for id in id_list:
                  z1.zadanie1_send(context=updater_z1, id=id)
             break
+
+    dispatcher_z1 = updater_z1.dispatcher
+
     code1_handler = MessageHandler(Filters.text, z1.zadanie1_code)
+
+    dispatcher_z1.add_handler(code1_handler)
+
+    updater_z1.start_polling()
+
 
 
 class z1:
@@ -148,6 +156,7 @@ class z1:
 
 
     def zadanie1_code(update: Update, context):
+
         return
 ########################################################################################################################
 
